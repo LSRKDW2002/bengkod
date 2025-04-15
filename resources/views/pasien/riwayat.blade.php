@@ -1,47 +1,49 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Riwayat Pemeriksaan</h3>
-        <div class="card-tools">
-            <input type="text" class="form-control input-sm" placeholder="Search...">
-        </div>
+    <div class="container">
+        <h2>Riwayat Pemeriksaan</h2>
+
+        <!-- Jika pasien tidak memiliki riwayat pemeriksaan -->
+        @if($riwayat->isEmpty())
+            <div class="alert alert-info">
+                Anda belum memiliki riwayat pemeriksaan.
+            </div>
+        @else
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Dokter</th>
+                        <th>Tanggal Pemeriksaan</th>
+                        <th>Status Pemeriksaan</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($riwayat as $index => $periksa)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $periksa->dokter->nama }}</td>
+                            <td>{{ $periksa->tgl_periksa->format('d-m-Y H:i') }}</td>
+
+                            <!-- Status Pemeriksaan -->
+                            <td>
+                                @if(empty($periksa->catatan) && empty($periksa->obat))
+                                    <span class="badge bg-warning text-dark">Belum</span>
+                                @else
+                                    <span class="badge bg-success">Sudah</span>
+                                @endif
+                            </td>
+
+                            <!-- Aksi: Lihat Detail -->
+                            <td>
+                                <a href="{{ route('pasien.periksa.detail', $periksa->id) }}" class="btn btn-info btn-sm">Lihat Detail</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
     </div>
-    <div class="card-body table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>ID Periksa</th>
-                    <th>Dokter</th>
-                    <th>Tanggal</th>
-                    <th>Catatan</th>
-                    <th>Obat</th>
-                    <th>Biaya</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>PX001</td>
-                    <td>Dr. Andi</td>
-                    <td>2025-04-01</td>
-                    <td>Sakit kepala ringan</td>
-                    <td>Paracetamol</td>
-                    <td>Rp 50.000</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>PX002</td>
-                    <td>Dr. Clara</td>
-                    <td>2025-04-03</td>
-                    <td>Demam tinggi</td>
-                    <td>Ibuprofen</td>
-                    <td>Rp 75.000</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
 @endsection

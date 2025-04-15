@@ -24,11 +24,12 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
+            'nama' => 'Boni',
             'alamat' => 'Jl.Nakula',
             'no_hp' => '081234567891',
             'email' => "Boni@gmail.com",
             'role' => 'pasien',
             'password' => Hash::make('password')
-        ]);
+        ]);        
     }
 }
