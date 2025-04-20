@@ -16,7 +16,7 @@
              alt="Foto Pengguna">
     </div>
     <div class="info">
-        <span class="d-block text-white">{{ Auth::user()->name ?? 'Nama Pengguna' }}</span>
+        <span class="d-block text-white">{{ Auth::user()->nama ?? 'Nama Pengguna' }}</span>
     </div>
 </div>
 

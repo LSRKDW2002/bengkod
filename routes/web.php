@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DokterController;
 use App\Http\Controllers\PeriksaController;
 use App\Http\Controllers\ObatController;
 use App\Http\Controllers\PasienPeriksaController;

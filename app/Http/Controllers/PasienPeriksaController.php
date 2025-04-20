@@ -3,51 +3,91 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Periksa;  // Model Periksa
-use App\Models\User;     // Model User untuk mengambil data dokter
+use App\Models\Periksa;
+use App\Models\User;
 
 class PasienPeriksaController extends Controller
 {
-    // Method untuk menampilkan form pemeriksaan langsung
     public function index()
     {
-        // Mendapatkan data dokter untuk dropdown
         $dokters = User::where('role', 'dokter')->get();
         return view('pasien.periksa.index', compact('dokters'));
     }
 
-    // Method untuk menyimpan pemeriksaan
     public function store(Request $request)
 {
-    // Validasi input dari form
     $request->validate([
-        'id_dokter' => 'required',
-        'keluhan' => 'required',
+        'id_dokter' => 'required|exists:users,id',
+        'keluhan' => 'required|string|max:1000',
     ]);
 
-    // Menyimpan data pemeriksaan ke database
     Periksa::create([
-        'id_pasien' => auth()->user()->id,  // Menggunakan id_pasien sesuai dengan kolom di database
+        'id_pasien' => auth()->id(),
         'id_dokter' => $request->id_dokter,
         'keluhan' => $request->keluhan,
-        'tgl_periksa' => now(), // Sesuaikan dengan kolom tanggal di tabel Periksa
+        'tgl_periksa' => now(),
+        'catatan' => null, // Tambahkan default value untuk kolom yang diperlukan
+        'biaya_periksa' => 0 // Default biaya 0
     ]);
 
-    // Mengarahkan ke halaman riwayat setelah data disimpan
-    return redirect()->route('pasien.riwayat')->with('success', 'Pemeriksaan berhasil disimpan');
+    return redirect()->route('pasien.riwayat')
+        ->with('success', 'Pemeriksaan berhasil diajukan');
 }
-    // Method untuk menampilkan riwayat pemeriksaan
+
     public function riwayat()
     {
-        // Mendapatkan riwayat pemeriksaan pasien berdasarkan id pasien
-        $riwayat = Periksa::where('id_pasien', auth()->user()->id)->get();
+        $riwayat = Periksa::where('id_pasien', auth()->id())
+            ->with(['dokter', 'obats'])
+            ->orderBy('tgl_periksa', 'desc')
+            ->get();
+
         return view('pasien.riwayat', compact('riwayat'));
     }
 
     public function detail($id)
+    {
+        $periksa = Periksa::with(['dokter', 'obats'])
+            ->where('id_pasien', auth()->id())
+            ->findOrFail($id);
+
+        return view('pasien.detail', compact('periksa'));
+    }
+
+    public function dashboard()
 {
-    // Menampilkan detail pemeriksaan berdasarkan ID
-    $periksa = Periksa::findOrFail($id);
-    return view('pasien.detail', compact('periksa'));
+    // Ambil semua riwayat pemeriksaan pasien
+    $riwayat = Periksa::where('id_pasien', auth()->id())
+        ->with(['dokter', 'obats'])
+        ->orderBy('tgl_periksa', 'desc')
+        ->get();
+
+    // Tambahkan status_color ke setiap pemeriksaan
+    $riwayat->each(function ($item) {
+        $item->status_color = $this->getStatusColor($item->status);
+    });
+
+    // Filter untuk 24 jam terakhir
+    $riwayat24Jam = $riwayat->filter(function($item) {
+        return $item->tgl_periksa >= now()->subDay();
+    });
+
+    // Ambil 5 aktivitas terbaru
+    $aktivitasTerkini = $riwayat->take(5);
+
+    return view('pasien.dashboard', compact('riwayat', 'riwayat24Jam', 'aktivitasTerkini'));
+}
+
+private function getStatusColor($status)
+{
+    $status = strtolower($status);
+    $colors = [
+        'selesai' => 'success',
+        'proses' => 'warning',
+        'menunggu' => 'info',
+        'dibatalkan' => 'danger',
+        'belum diperiksa' => 'secondary'
+    ];
+
+    return $colors[$status] ?? 'secondary';
 }
 }

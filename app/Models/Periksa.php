@@ -4,13 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
 class Periksa extends Model
 {
     use HasFactory;
 
-    protected $table = 'periksa'; // Pastikan nama tabel sesuai
+    protected $table = 'periksa';
     protected $fillable = [
         'id_pasien',
         'id_dokter',
@@ -20,9 +19,8 @@ class Periksa extends Model
         'biaya_periksa',
     ];
 
-    // Menambahkan casting untuk tgl_periksa
     protected $casts = [
-        'tgl_periksa' => 'datetime', // Casting ke tipe data datetime
+        'tgl_periksa' => 'datetime',
     ];
 
     // Relasi ke Pasien
@@ -47,5 +45,17 @@ class Periksa extends Model
     public function obats()
     {
         return $this->belongsToMany(Obat::class, 'detail_periksa', 'id_periksa', 'id_obat');
+    }
+
+    // Accessor untuk status
+    public function getStatusAttribute()
+    {
+        return empty($this->catatan) ? 'Belum Diperiksa' : 'Sudah Diperiksa';
+    }
+
+    // Accessor untuk warna status
+    public function getStatusColorAttribute()
+    {
+        return empty($this->catatan) ? 'warning' : 'success';
     }
 }
