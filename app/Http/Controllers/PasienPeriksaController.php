@@ -55,26 +55,12 @@ class PasienPeriksaController extends Controller
 
     public function dashboard()
 {
-    // Ambil semua riwayat pemeriksaan pasien
     $riwayat = Periksa::where('id_pasien', auth()->id())
         ->with(['dokter', 'obats'])
         ->orderBy('tgl_periksa', 'desc')
         ->get();
 
-    // Tambahkan status_color ke setiap pemeriksaan
-    $riwayat->each(function ($item) {
-        $item->status_color = $this->getStatusColor($item->status);
-    });
-
-    // Filter untuk 24 jam terakhir
-    $riwayat24Jam = $riwayat->filter(function($item) {
-        return $item->tgl_periksa >= now()->subDay();
-    });
-
-    // Ambil 5 aktivitas terbaru
-    $aktivitasTerkini = $riwayat->take(5);
-
-    return view('pasien.dashboard', compact('riwayat', 'riwayat24Jam', 'aktivitasTerkini'));
+    return view('pasien.dashboard', compact('riwayat'));
 }
 
 private function getStatusColor($status)

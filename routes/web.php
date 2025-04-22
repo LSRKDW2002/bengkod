@@ -25,7 +25,10 @@ Route::get('/dashboard', function () {
 // ===============================
 require __DIR__.'/auth.php';
 
-Auth::routes();
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
+
+Auth::routes(['verify' => true]);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

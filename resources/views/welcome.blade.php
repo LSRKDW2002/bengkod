@@ -28,7 +28,7 @@
                     <div>
                         <a href="#" class="flex items-center py-4 px-2">
                             <i class="fas fa-heartbeat text-blue-600 text-2xl mr-2"></i>
-                            <span class="font-semibold text-gray-900 text-lg">HealthCare System</span>
+                            <span class="font-semibold text-gray-900 text-lg">DewaSehat</span>
                         </a>
                     </div>
                 </div>
@@ -144,7 +144,7 @@
                 <div class="mb-4 md:mb-0">
                     <div class="flex items-center">
                         <i class="fas fa-heartbeat text-2xl text-blue-400 mr-2"></i>
-                        <span class="font-semibold text-xl">HealthCare System</span>
+                        <span class="font-semibold text-xl">DewaSehat</span>
                     </div>
                     <p class="text-gray-400 mt-2">Solusi manajemen kesehatan terintegrasi</p>
                 </div>
@@ -164,7 +164,7 @@
                 </div>
             </div>
             <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
-                <p>&copy; {{ date('Y') }} HealthCare System. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} DewaSehat. All rights reserved.</p>
             </div>
         </div>
     </footer>
